@@ -29,10 +29,11 @@
 #include <stdio.h>
 #include <iostream>
 
-
+#include "boost/bind/bind.hpp"
 
 namespace dso
 {
+using namespace boost::placeholders;
 
 template<typename Running>
 class IndexThreadReduce

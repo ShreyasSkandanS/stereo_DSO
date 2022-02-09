@@ -54,10 +54,13 @@
 
 #include "util/ImageAndExposure.h"
 
+#include "boost/bind/bind.hpp"
+
 #include <cmath>
 
 namespace dso
 {
+using namespace boost::placeholders;
 int FrameHessian::instanceCounter=0;
 int PointHessian::instanceCounter=0;
 int CalibHessian::instanceCounter=0;

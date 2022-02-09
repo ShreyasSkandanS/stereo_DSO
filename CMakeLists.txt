@@ -19,8 +19,8 @@ find_package(Boost COMPONENTS system thread)
 
 # optional libraries
 find_package(LibZip QUIET)
-find_package(Pangolin 0.2 QUIET)
-find_package(OpenCV QUIET)
+find_package(Pangolin REQUIRED)
+find_package(OpenCV REQUIRED)
 
 find_package(Glog REQUIRED)
 include_directories(${Glog_INCLUDE_DIRS})
