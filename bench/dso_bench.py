@@ -48,7 +48,7 @@ class StereoDsoRun(DsoRun):
         self.dataset_ = dataset
         if "vkitti" in dataset.lower():
             dataset += '/frames/rgb'
-        self.cmd_ = ['/home/ian/Repos/stereo_DSO/build/bin/dso_dataset', 'files=' + dataset, 'calib=' + dataset_calib, 'groundtruth=' + gt, 'mode=1', 'nogui=1', 'quiet=1', 'nolog=1', 'nomt=0']
+        self.cmd_ = ['/home/shreyas/stereo_DSO/build/bin/dso_dataset', 'files=' + dataset, 'calib=' + dataset_calib, 'groundtruth=' + gt, 'mode=1', 'nogui=0', 'quiet=1', 'nolog=1', 'nomt=0']
         if self.reverse_:
             self.cmd_.append('reverse=1')
 
@@ -61,7 +61,7 @@ class DsolRun(DsoRun):
 
 class DsoBench:
     def __init__(self):
-        self.datasets_ = yaml.load(open('datasets.yml', 'r'))
+        self.datasets_ = yaml.safe_load(open('datasets.yml', 'r'))
     
     def run(self):
         for dataset in self.datasets_:

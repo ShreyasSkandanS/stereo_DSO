@@ -11,9 +11,9 @@ for((i=00;i<=00;i++))
     
     # run dso
      ./build/bin/dso_dataset \
- 	  files=/media/sjm/SJM_WIN/KITTI/o/${seqnum} \
- 	  calib=./calib/kitti/${seqnum}.txt \
-	  groundtruth=./groundTruthPose/kitti/${seqnum}.txt \
+ 	  files=/home/shreyas/Work/kitti/dataset/sequences/${seqnum} \
+ 	  calib=/home/shreyas/Work/kitti/dataset/sequences/${seqnum}/calib.txt \
+	  groundtruth=/home/shreyas/Work/kitti/dataset/poses/${seqnum}.txt \
  	  preset=0 mode=1 \
 	  quiet=1 nomt=1
     }&

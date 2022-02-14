@@ -1,53 +1,10 @@
 %YAML 1.2
 ---
-- vkitti:
-  calib: '/home/ian/Repos/stereo_DSO/calib/vkitti/Scene01.txt'  
-  gt: '/home/ian/Repos/stereo_DSO/groundTruthPose/dummy.txt'
-  root: '/media/ian/ResearchSSD/VKITTI'
-  sequences:
-    - 'Scene01/15-deg-left' 
-    - 'Scene01/15-deg-right' 
-    - 'Scene01/30-deg-left' 
-    - 'Scene01/30-deg-right' 
-    - 'Scene01/clone' 
-    - 'Scene01/fog' 
-    - 'Scene01/morning' 
-    - 'Scene01/overcast' 
-    - 'Scene01/rain' 
-    - 'Scene01/sunset' 
-    - 'Scene20/15-deg-left' 
-    - 'Scene20/15-deg-right' 
-    - 'Scene20/30-deg-left' 
-    - 'Scene20/30-deg-right' 
-    - 'Scene20/clone' 
-    - 'Scene20/fog' 
-    - 'Scene20/morning' 
-    - 'Scene20/overcast' 
-    - 'Scene20/rain' 
-    - 'Scene20/sunset' 
 - kitti0_2:
-  calib: '/home/ian/Repos/stereo_DSO/calib/kitti/00.txt'  
-  gt: '/home/ian/Repos/stereo_DSO/groundTruthPose/dummy.txt'
-  root: '/media/ian/HDD1/KITTI/dataset/sequences'
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/00.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
   sequences:
     - '00' 
     - '01' 
     - '02' 
-- kitti3:
-  calib: '/home/ian/Repos/stereo_DSO/calib/kitti/03.txt'  
-  gt: '/home/ian/Repos/stereo_DSO/groundTruthPose/dummy.txt'
-  root: '/media/ian/HDD1/KITTI/dataset/sequences'
-  sequences:
-    - '03' 
-- kitti4_10:
-  calib: '/home/ian/Repos/stereo_DSO/calib/kitti/04.txt'  
-  gt: '/home/ian/Repos/stereo_DSO/groundTruthPose/dummy.txt'
-  root: '/media/ian/HDD1/KITTI/dataset/sequences'
-  sequences:
-    - '04' 
-    - '05' 
-    - '06' 
-    - '07' 
-    - '08' 
-    - '09' 
-    - '10' 
