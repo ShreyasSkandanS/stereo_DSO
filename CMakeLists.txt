@@ -111,6 +111,7 @@ endif()
 include_directories(${CSPARSE_INCLUDE_DIR} ${CHOLMOD_INCLUDE_DIR})
 add_library(dso ${dso_SOURCE_FILES} ${dso_opencv_SOURCE_FILES}
                 ${dso_pangolin_SOURCE_FILES})
+target_link_libraries(dso opencv_core opencv_imgproc opencv_highgui glog::glog)
 
 # set_property( TARGET dso APPEND_STRING PROPERTY COMPILE_FLAGS -Wall )
 
@@ -130,11 +131,6 @@ if(OpenCV_FOUND AND Pangolin_FOUND)
     cxsparse
     Boost::thread
     Boost::system
-    opencv_core
-    opencv_imgproc
-    opencv_highgui
-    opencv_imgcodecs
-    glog::glog
     ${LIBZIP_LIBRARY}
     ${Pangolin_LIBRARIES})
 else()
