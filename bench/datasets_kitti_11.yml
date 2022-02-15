@@ -1,0 +1,68 @@
+%YAML 1.2
+---
+- kitti00:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/00.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '00' 
+- kitti01:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/01.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '01' 
+- kitti02:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/02.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '02' 
+- kitti03:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/03.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '03' 
+- kitti04:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/04.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '04' 
+- kitti05:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/05.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '05' 
+- kitti06:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/06.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '06' 
+- kitti07:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/07.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '07' 
+- kitti08:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/08.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '08' 
+- kitti09:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/09.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '09' 
+- kitti10:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/10.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '10' 

@@ -1,10 +1,26 @@
 %YAML 1.2
 ---
-- kitti0_2:
-  calib: '/home/shreyas/stereo_DSO/calib/kitti/00.txt'  
+- kitti07:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/07.txt'  
   gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
   root: '/home/shreyas/Work/kitti/dataset/sequences'
   sequences:
-    - '00' 
-    - '01' 
-    - '02' 
+    - '07' 
+- kitti08:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/08.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '08' 
+- kitti09:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/09.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '09' 
+- kitti10:
+  calib: '/home/shreyas/stereo_DSO/calib/kitti/10.txt'  
+  gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
+  root: '/home/shreyas/Work/kitti/dataset/sequences'
+  sequences:
+    - '10' 
