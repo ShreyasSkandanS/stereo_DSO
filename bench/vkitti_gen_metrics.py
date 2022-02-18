@@ -11,20 +11,22 @@ class GenMetrics:
         files = os.scandir(data_dir) 
         self.errors_ = []
         self.datasets_ = []
+        gt_dir = 'vkitti_groundtruth'
         for file in files:
-            print(file.name)
+            print("Currently processing: {}".format(file.name))
             original_file = file.path
 
             # search for gt
             gt_filepath = ''
-            for gt_file in os.scandir('ground_truth'):
-                if gt_file.name[:-4] in original_file and '_rev' not in gt_file.name:
+            for gt_file in os.scandir(gt_dir):
+                #print("--- checking: {}".format(gt_file.name[:-4]))
+                if gt_file.name[:-4].replace('-', '_') in original_file.lower().replace('-', '_') and '_rev' not in gt_file.name:
                     gt_filepath = gt_file.path
                     break
             if gt_filepath == '':
-                print('ERROR: NO GROUND TRUTH FOUND FOR ' + str(original_file))
-                continue
-
+                print('Ground Truth ERROR: NO GROUND TRUTH FOUND FOR ' + str(original_file))
+                break
+            print("-- Found GT file: {}".format(gt_filepath))
             # create mirror file if necessary
             if file.name[-7:] == 'rev.txt':
                 rev_gt_filepath = gt_filepath[:-4] + '_rev.txt'
@@ -68,5 +70,5 @@ class GenMetrics:
         plt.show()
 
 if __name__ == '__main__':
-    gm = GenMetrics('benchmark_results/stereo_dso')
+    gm = GenMetrics('benchmark_results/dsol')
     gm.gen_cumulative_error_plot()

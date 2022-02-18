@@ -12,11 +12,16 @@ class DsoRun:
 
     def run(self):
         name = 'benchmark_results/' + self.method_ + '/' + self.dataset_.replace('/', '_')
+
         if self.reverse_:
             name += '_rev'
 
         try:
             os.mkdir('benchmark_results')
+        except FileExistsError:
+            pass
+
+        try:
             os.mkdir('benchmark_results/' + self.method_)
         except FileExistsError:
             pass
@@ -41,37 +46,29 @@ class DsoRun:
                 print('')
                 retries += 1
 
-class StereoDsoRun(DsoRun):
-    def __init__(self, dataset, dataset_calib, gt, reverse=False):
-        super().__init__(reverse)
-        self.method_ = 'stereo_dso'
-        self.dataset_ = dataset
-        if "vkitti" in dataset.lower():
-            dataset += '/frames/rgb'
-        self.cmd_ = ['/home/shreyas/stereo_DSO/build/bin/dso_dataset', 'files=' + dataset, 'calib=' + dataset_calib, 'groundtruth=' + gt, 'mode=1', 'nogui=1', 'quiet=1', 'nolog=1', 'nomt=0']
-        if self.reverse_:
-            self.cmd_.append('reverse=1')
-
 class DsolRun(DsoRun):
     def __init__(self, dataset, dataset_calib, gt, reverse=False):
         super().__init__(reverse)
         self.method_ = 'dsol'
         self.dataset_ = dataset
+        self.reverse_ = reverse
         self.cmd_ = ['roslaunch', 'svcpp', 'dsol_data.launch', 'save:=' + str(Path.cwd()) + '/result.txt', 'base_dir:=' + dataset]
+        #if self.reverse_:
+        #    self.cmd_.append('
 
-class DsoBench:
+class DsolBench:
     def __init__(self):
-        self.datasets_ = yaml.safe_load(open('datasets/datasets_vkitti.yml', 'r'))
+        self.datasets_ = yaml.safe_load(open('datasets_vkitti.yml', 'r'))
     
     def run(self):
         for dataset in self.datasets_:
             for seq in dataset['sequences']:
                 full_path = dataset['root'] + '/' + seq
-                dr = StereoDsoRun(full_path, dataset['calib'], dataset['gt'])
+                dr = DsolRun(full_path, dataset['calib'], dataset['gt'])
                 dr.run()
-                dr = StereoDsoRun(full_path, dataset['calib'], dataset['gt'], True)
-                dr.run()
+                #dr = DsolRun(full_path, dataset['calib'], dataset['gt'], True)
+                #dr.run()
 
 if __name__ == '__main__':
-    db = DsoBench()
+    db = DsolBench()
     db.run()
