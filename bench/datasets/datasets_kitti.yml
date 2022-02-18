@@ -65,4 +65,4 @@
   gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
   root: '/home/shreyas/Work/kitti/dataset/sequences'
   sequences:
-    - '10' 
+    - '10'
