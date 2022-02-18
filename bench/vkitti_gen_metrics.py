@@ -11,7 +11,7 @@ class GenMetrics:
         files = os.scandir(data_dir) 
         self.errors_ = []
         self.datasets_ = []
-        gt_dir = 'vkitti_groundtruth'
+        gt_dir = 'benchmark_results/vkitti_groundtruth'
         for file in files:
             print("Currently processing: {}".format(file.name))
             original_file = file.path
@@ -62,13 +62,16 @@ class GenMetrics:
             #plot.trajectories(fig, traj_by_label, plot.PlotMode.xyz)
             #plt.show()
 
-    def gen_cumulative_error_plot(self):
-        error_list = np.arange(0, np.max(self.errors_)+0.1, 0.01)
+    def gen_cumulative_error_plot(self, ax, error_list):
         error_less_count = np.sum(np.array(self.errors_)[:,None] < error_list, axis=0)
-        fig = plt.figure()
-        plt.plot(error_list, error_less_count/len(self.errors_))
-        plt.show()
+        ax.plot(error_list, error_less_count/len(self.errors_))
+        #plt.show()
 
 if __name__ == '__main__':
+    fig, ax = plt.subplots()
+    error_list = np.arange(0, 200, 0.01)
     gm = GenMetrics('benchmark_results/dsol')
-    gm.gen_cumulative_error_plot()
+    gm.gen_cumulative_error_plot(ax, error_list)
+    gm2 = GenMetrics('benchmark_results/stereo_dso')
+    gm2.gen_cumulative_error_plot(ax, error_list)
+    plt.show()
