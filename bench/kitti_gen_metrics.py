@@ -70,3 +70,5 @@ class GenMetrics:
 if __name__ == '__main__':
     gm = GenMetrics('benchmark_results/dsol')
     gm.gen_cumulative_error_plot()
+    gm2 = GenMetrics('benchmark_results/stereo_dso')
+    gm2.gen_cumulative_error_plot()
