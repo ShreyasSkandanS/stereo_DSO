@@ -3,14 +3,20 @@
 from scipy.spatial.transform import Rotation
 import numpy as np
 
+from pathlib import Path
+
 basedir = '/home/shreyas/Work/vkitti'
 scenes = ['Scene01','Scene02','Scene06','Scene18','Scene20']
 seqs = ['15-deg-left','15-deg-right','30-deg-left','30-deg-right','clone','fog','morning','overcast','rain','sunset']
+
+save_path = Path('/tmp/vkitti_gt/')
+save_path.mkdir(exist_ok=True)
 
 def prep_extrinsics(file) -> np.ndarray:
     # i, cam, T00, T01, T02, T03, T11, ...
     data = np.loadtxt(file, skiprows=1)
     extrins = data[:, 2:].reshape(-1, 4, 4)
+    extrins = extrins[::2]
     # fix rotation using scipy
     from scipy.spatial.transform import Rotation
     extrins[:, :3, :3] = Rotation.from_matrix(extrins[:, :3, :3]).as_matrix()
@@ -32,9 +38,11 @@ def inverse_transform(T: np.ndarray) -> np.ndarray:
     return T_inv
 
 for scene in scenes:
+
     for seq in seqs:
+        print(f"Scene {scene} seq {seq}")
         file = open(basedir + '/' + scene + '/' + seq + '/extrinsic.txt', 'r')
-        outfile_name = 'vkitti_groundtruth/' + scene.lower() + '_' + seq.replace('-', '_') + '.txt'
+        outfile_name =  '/tmp/vkitti_gt/' + scene.lower() + '_' + seq.replace('-', '_') + '.txt'
         outfile = open(outfile_name, 'w')
 
         extrins = prep_extrinsics(file)
