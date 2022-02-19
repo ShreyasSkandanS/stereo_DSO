@@ -3,14 +3,20 @@
 from scipy.spatial.transform import Rotation
 import numpy as np
 
+from pathlib import Path
+
 basedir = '/home/shreyas/Work/vkitti'
 scenes = ['Scene01','Scene02','Scene06','Scene18','Scene20']
 seqs = ['15-deg-left','15-deg-right','30-deg-left','30-deg-right','clone','fog','morning','overcast','rain','sunset']
+
+save_path = Path('/tmp/vkitti_gt/')
+save_path.mkdir(exist_ok=True)
 
 def prep_extrinsics(file) -> np.ndarray:
     # i, cam, T00, T01, T02, T03, T11, ...
     data = np.loadtxt(file, skiprows=1)
     extrins = data[:, 2:].reshape(-1, 4, 4)
+    extrins = extrins[::2]
     # fix rotation using scipy
     from scipy.spatial.transform import Rotation
     extrins[:, :3, :3] = Rotation.from_matrix(extrins[:, :3, :3]).as_matrix()
@@ -33,8 +39,9 @@ def inverse_transform(T: np.ndarray) -> np.ndarray:
 
 for scene in scenes:
     for seq in seqs:
+        print(f"Scene: {scene} seq: {seq}")
         file = open(basedir + '/' + scene + '/' + seq + '/extrinsic.txt', 'r')
-        outfile_name = 'vkitti_groundtruth/' + scene.lower() + '_' + seq.replace('-', '_') + '.txt'
+        outfile_name =  Path.joinpath(save_path, scene.lower() + '_' + seq.replace('-', '_') + '.txt')
         outfile = open(outfile_name, 'w')
 
         extrins = prep_extrinsics(file)
@@ -43,10 +50,6 @@ for scene in scenes:
         quatR = Rotation.from_matrix(poses[..., :3, :3]).as_quat()
         for ind in range(quatR.shape[0]):
             outfile.write(f"{ind} {poses[ind, 0, 3]} {poses[ind, 1, 3]} {poses[ind, 2, 3]} {quatR[ind, 0]} {quatR[ind, 1]} {quatR[ind, 2]} {quatR[ind, 3]}\n")
-        #for ind, pose_str in enumerate(file.readlines()):
-        #    raw = np.fromstring(pose_str, sep=' ').reshape(3, 4)
-        #    R = Rotation.from_matrix(raw[:3, :3]).as_quat()
-        #    outfile.write(f"{ind} {raw[0,3]} {raw[1,3]} {raw[2,3]} {R[0]} {R[1]} {R[2]} {R[3]}\n")
         outfile.close()
 
 
