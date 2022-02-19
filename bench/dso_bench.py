@@ -17,6 +17,10 @@ class DsoRun:
 
         try:
             os.mkdir('benchmark_results')
+        except FileExistsError:
+            pass
+
+        try:
             os.mkdir('benchmark_results/' + self.method_)
         except FileExistsError:
             pass
@@ -61,7 +65,7 @@ class DsolRun(DsoRun):
 
 class DsoBench:
     def __init__(self):
-        self.datasets_ = yaml.safe_load(open('datasets/datasets_vkitti.yml', 'r'))
+        self.datasets_ = yaml.safe_load(open('datasets/datasets_kitti.yml', 'r'))
     
     def run(self):
         for dataset in self.datasets_:
