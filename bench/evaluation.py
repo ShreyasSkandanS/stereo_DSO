@@ -10,12 +10,14 @@ from evo.tools import file_interface, plot
 import matplotlib.pyplot as plt
 import pickle
 
-dataset = 'vkitti'
-method = 'stereo_dso'
+dataset = 'tartan'
+method = 'dsol'
 base_dir = Path('/home/shreyas/stereo_DSO/bench/benchmark_results')
 gt_dir = Path.joinpath(base_dir, dataset + '_gt')
 method_dir = Path.joinpath(base_dir, method)
 save_path = Path.joinpath(base_dir, method + '_' + dataset + '.pkl')
+
+gt_reverse_flag = False
 
 @dataclass
 class Results:
@@ -38,7 +40,7 @@ class Results:
         self.method_len = method_len
 
 gt_list = list(gt_dir.glob('*'))
-method_list = list(method_dir.glob('*' + dataset + '*'))
+method_list = list(method_dir.glob('*_' + dataset + '_*'))
 
 result_dict = {}
 
@@ -48,37 +50,57 @@ for gt_file in gt_list:
     if dataset == 'vkitti':
         sequence_no = '_'.join(gt_file.stem.split('_')[1:])
         print(f'GT File: {gt_file.stem}, ID: {sequence_id}, #: {sequence_no}')
+        dict_key = dataset + '_' + sequence_id + '_' + sequence_no
     elif dataset == 'tartan':
         sequence_no = gt_file.stem.split('_')[-1]
         print(f'GT File: {gt_file.stem}, ID: {sequence_id}, #: {sequence_no}')
-    else:
+        dict_key = dataset + '_' + sequence_id + '_' + sequence_no
+    elif dataset == 'kitti':
         sequence_no = gt_file.stem.split('_')[-1]
         print(f'GT File: {gt_file.stem}, ID: {sequence_id}, #: {sequence_no}')
-
+        dict_key = dataset + '_' + sequence_no
+    else:
+        print('ERROR. No such dataset.')
+        break
     method_pair = ''
 
     # Open GT file
     gt_in = np.loadtxt(gt_file)
 
-    dict_key = dataset + '_' + sequence_id + '_' + sequence_no
+    if gt_file.stem.split('_')[-1] == 'rev':
+        gt_reverse_flag = True
+    else:
+        gt_reverse_flag = False
 
     for method_file in method_list:
-        #
         if dataset == 'vkitti':
-            method_ref_seq = method_file.stem.lower().replace('-','_')
+            method_ref_seq = method_file.stem.lower().replace('-', '_')
             method_ref_id = method_file.stem.lower()
         elif dataset == 'tartan':
             method_ref_seq = method_file.stem.lower()
             method_ref_id = method_file.stem
-        else:
+        elif dataset == 'kitti':
             method_ref_seq = method_file.stem.lower()
             method_ref_id = method_file.stem
+        else:
+            print('ERROR> No such dataset.')
+            break
+
         if sequence_id in method_ref_id and sequence_no in method_ref_seq:
+            if gt_reverse_flag:
+                if method_file.stem.split('_')[-1] == 'rev':
+                    method_pair = method_file
+                else:
+                    continue
+            else:
+                if method_file.stem.split('_')[-1] == 'rev':
+                    continue
             method_pair = method_file
+            break
 
     if method_pair == '':
-        print('ERROR: Could not find MethodO reference file.')
-        res = Results(method=method, ape_rmse_method=-1, rpe_rmse_method=-1, ape_rmse_rot=-1, rpe_rmse_rot=-1, gt_len=gt_in.shape[0], method_len=-1)
+        print('ERROR: Could not find Method reference file.\n')
+        res = Results(method=method, ape_rmse=-1, rpe_rmse=-1, ape_rmse_rot=-1, rpe_rmse_rot=-1, gt_len=gt_in.shape[0], method_len=-1)
         result_dict[dict_key] = res
         continue
 
@@ -111,9 +133,9 @@ for gt_file in gt_list:
     res = Results(method=method, ape_rmse=ape_rmse_method, rpe_rmse=rpe_rmse_method, ape_rmse_rot=ape_rmse_method_rot, rpe_rmse_rot=rpe_rmse_method_rot, gt_len=gt_in.shape[0], method_len=method_in.shape[0])
     result_dict[dict_key] = res
 
-    print(f'Processed {dict_key} successfully.')
+    print(f'Processed {dict_key} successfully.\n')
 
 outfile = open(save_path, 'wb')
 pickle.dump(result_dict, outfile)
 outfile.close()
-print(f'Method: {method} on dataset: {dataset} completed.')
+print(f'Method: {method} on dataset: {dataset} completed. Total data points: {len(result_dict)}')
