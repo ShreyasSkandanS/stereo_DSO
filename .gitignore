@@ -1,3 +1,4 @@
 build/
 bench/benchmark_results/
 bench/.idea/
+bench/result.txt

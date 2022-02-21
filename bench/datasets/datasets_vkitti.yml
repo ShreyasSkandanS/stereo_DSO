@@ -1,9 +1,9 @@
 %YAML 1.2
 ---
-- vkitti:
+- dataset: 'vk2'
   calib: '/home/shreyas/stereo_DSO/calib/vkitti/Scene01.txt'  
   gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
-  root: '/home/shreyas/Work/vkitti/'
+  root: '/home/shreyas/Work/vkitti'
   sequences:
     - 'Scene01/15-deg-left' 
     - 'Scene01/15-deg-right' 
@@ -15,10 +15,10 @@
     - 'Scene01/overcast' 
     - 'Scene01/rain' 
     - 'Scene01/sunset' 
-- vkitti:
+- dataset: 'vk2'
   calib: '/home/shreyas/stereo_DSO/calib/vkitti/Scene01.txt'  
   gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
-  root: '/home/shreyas/Work/vkitti/'
+  root: '/home/shreyas/Work/vkitti'
   sequences:
     - 'Scene02/15-deg-left' 
     - 'Scene02/15-deg-right' 
@@ -30,10 +30,10 @@
     - 'Scene02/overcast' 
     - 'Scene02/rain' 
     - 'Scene02/sunset' 
-- vkitti:
+- dataset: 'vk2'
   calib: '/home/shreyas/stereo_DSO/calib/vkitti/Scene01.txt'  
   gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
-  root: '/home/shreyas/Work/vkitti/'
+  root: '/home/shreyas/Work/vkitti'
   sequences:
     - 'Scene06/15-deg-left' 
     - 'Scene06/15-deg-right' 
@@ -45,10 +45,10 @@
     - 'Scene06/overcast' 
     - 'Scene06/rain' 
     - 'Scene06/sunset' 
-- vkitti:
+- dataset: 'vk2'
   calib: '/home/shreyas/stereo_DSO/calib/vkitti/Scene01.txt'  
   gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
-  root: '/home/shreyas/Work/vkitti/'
+  root: '/home/shreyas/Work/vkitti'
   sequences:
     - 'Scene18/15-deg-left' 
     - 'Scene18/15-deg-right' 
@@ -60,10 +60,10 @@
     - 'Scene18/overcast' 
     - 'Scene18/rain' 
     - 'Scene18/sunset' 
-- vkitti:
+- dataset: 'vk2'
   calib: '/home/shreyas/stereo_DSO/calib/vkitti/Scene01.txt'  
   gt: '/home/shreyas/stereo_DSO/groundTruthPose/dummy.txt'
-  root: '/home/shreyas/Work/vkitti/'
+  root: '/home/shreyas/Work/vkitti'
   sequences:
     - 'Scene20/15-deg-left' 
     - 'Scene20/15-deg-right' 
