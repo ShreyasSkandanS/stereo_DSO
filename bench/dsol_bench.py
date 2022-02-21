@@ -59,7 +59,7 @@ class DsolRun(DsoRun):
 
 class DsolBench:
     def __init__(self):
-        self.datasets_ = yaml.safe_load(open('datasets/datasets_kitti.yml', 'r'))
+        self.datasets_ = yaml.safe_load(open('datasets/datasets_tartan.yml', 'r'))
     
     def run(self):
         for dataset in self.datasets_:
