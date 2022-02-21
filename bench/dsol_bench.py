@@ -54,12 +54,12 @@ class DsolRun(DsoRun):
         self.reverse_ = reverse
         self.dataset_id_ = dataset_id
         self.cmd_ = ['roslaunch', 'svcpp', 'dsol_data.launch', 'save:=' + str(Path.cwd()) + '/result.txt', 'data_dir:=' + dataset, 'data:=' + dataset_id]
-        #if self.reverse_:
-        #    self.cmd_.append('
+        if self.reverse_:
+            self.cmd_.append('reverse:=True')
 
 class DsolBench:
     def __init__(self):
-        self.datasets_ = yaml.safe_load(open('datasets/datasets_tartan.yml', 'r'))
+        self.datasets_ = yaml.safe_load(open('datasets/datasets_vkitti.yml', 'r'))
     
     def run(self):
         for dataset in self.datasets_:
@@ -67,8 +67,8 @@ class DsolBench:
                 full_path = dataset['root'] + '/' + seq
                 dr = DsolRun(full_path, dataset['calib'], dataset['gt'], False, dataset['dataset'])
                 dr.run()
-                #dr = DsolRun(full_path, dataset['calib'], dataset['gt'], True, dataset['dataset'])
-                #dr.run()
+                dr = DsolRun(full_path, dataset['calib'], dataset['gt'], True, dataset['dataset'])
+                dr.run()
 
 if __name__ == '__main__':
     db = DsolBench()

@@ -10,8 +10,8 @@ from evo.tools import file_interface, plot
 import matplotlib.pyplot as plt
 import pickle
 
-dataset = 'tartan'
-method = 'dsol'
+dataset = 'vkitti'   # 'kitti', 'vkitti', 'tartan'
+method = 'stereo_dso'      # 'dsol', 'stereo_dso'
 base_dir = Path('/home/shreyas/stereo_DSO/bench/benchmark_results')
 gt_dir = Path.joinpath(base_dir, dataset + '_gt')
 method_dir = Path.joinpath(base_dir, method)
