@@ -56,13 +56,6 @@ class StereoDsoRun(DsoRun):
         if self.reverse_:
             self.cmd_.append('reverse=1')
 
-class DsolRun(DsoRun):
-    def __init__(self, dataset, dataset_calib, gt, reverse=False):
-        super().__init__(reverse)
-        self.method_ = 'dsol'
-        self.dataset_ = dataset
-        self.cmd_ = ['roslaunch', 'svcpp', 'dsol_data.launch', 'save:=' + str(Path.cwd()) + '/result.txt', 'base_dir:=' + dataset]
-
 class DsoBench:
     def __init__(self):
         self.datasets_ = yaml.safe_load(open('datasets/datasets_kitti.yml', 'r'))
