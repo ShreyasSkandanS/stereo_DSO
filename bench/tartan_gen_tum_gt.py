@@ -26,7 +26,7 @@ def prep_poses(pose_file) -> np.ndarray:
     poses[:, :3, :3] = Rotation.from_quat(data[:, 3:]).as_matrix() @ R_ned_cam
     # normalize pose to the first pose
     # T_c0_ci = T_w_c0^-1 @ T_w_ci = T_c0_w @ T_w_ci
-    poses = np.linalg.inv(poses[0]) @ poses
+    #poses = np.linalg.inv(poses[0]) @ poses
     return poses
 
 folders = list(basedir.glob('*'))

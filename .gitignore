@@ -1,3 +1,4 @@
 build/
 bench/.idea/
 bench/result.txt
+bench/__pycache__
