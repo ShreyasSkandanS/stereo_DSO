@@ -47,6 +47,8 @@ with open(pickle_path, 'rb') as f:
 RMSE_list = []
 
 for seq_k in p_data.keys():
+    if seq_k.endswith('_rev'):
+        continue
     print(f'Key: {seq_k}')
     sequence = p_data[seq_k]
     print(f'Sequence: {sequence}')
@@ -56,8 +58,10 @@ for seq_k in p_data.keys():
         RMSE_list.append(LARGE_ERROR_CONSTANT)
 
 #ape_rmse_viz_vector = np.tile(np.asarray(RMSE_list), (5,1))
-ape_rmse_viz_vector = np.asarray(RMSE_list).reshape(10,10)
+ape_rmse_viz_vector = np.asarray(RMSE_list).reshape(5,10)
 
 fig = plt.figure()
 plt.imshow(ape_rmse_viz_vector, cmap='jet', interpolation='nearest')
+plt.colorbar()
+plt.grid(None)
 plt.show()

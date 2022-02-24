@@ -1,8 +1,6 @@
 from pathlib import Path
 import numpy as np
 from scipy.spatial.transform import Rotation
-import typing as T
-
 
 def inverse_transform(T: np.ndarray) -> np.ndarray:
     """Inverse transform [R, t]^-1 = [R', -R'@t]"""
@@ -47,6 +45,7 @@ class Dataset:
     def __init__(self, base_dir) -> None:
         self.base_dir = Path(base_dir)
         self.base_dir.mkdir(exist_ok=True, parents=True)
+        self.output_dir.mkdir(exist_ok=True, parents=True)
         self.files = []
         self.names = []
 
@@ -56,11 +55,12 @@ class Dataset:
     def get_name(self, idx: int) -> str:
         return self.names[idx]
 
-    def get_files(self, idx: int) -> Path:
+    def get_file(self, idx: int) -> Path:
         return self.files[idx]
 
+    @property
     def output_dir(self) -> Path:
-        return self.base_dir
+        return self.base_dir / 'gt'
 
     def get_pose(self, idx: int) -> np.ndarray:
         raise NotImplementedError("Not implemented")
@@ -116,8 +116,8 @@ class VkittiDataset(Dataset):
 def write_all(ds: Dataset):
     for i in range(len(ds)):
         write_tum_fwd_rev(ds.get_pose(i),
-                          f"{ds.output_dir()}/{ds.get_name(i)}_fwd.txt",
-                          f"/{ds.output_dir()}/{ds.get_name(i)}_rev.txt")
+                          f"{ds.output_dir}/{ds.get_name(i)}_fwd.txt",
+                          f"{ds.output_dir}/{ds.get_name(i)}_rev.txt")
 
 
 if __name__ == "__main__":
