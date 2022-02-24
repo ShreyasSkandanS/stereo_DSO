@@ -1,6 +1,9 @@
 from pathlib import Path
 import numpy as np
 from scipy.spatial.transform import Rotation
+from dataclasses import dataclass
+import subprocess as sp
+
 
 def inverse_transform(T: np.ndarray) -> np.ndarray:
     """Inverse transform [R, t]^-1 = [R', -R'@t]"""
@@ -40,6 +43,48 @@ def write_tum_fwd_rev(poses, filename, filename_rev):
     write_tum(poses2tum(poses[::-1]), filename_rev)
 
 
+class Runner:
+
+    def __init__(self) -> None:
+        pass
+
+    def run(self):
+        pass
+
+    def save(self):
+        pass
+
+
+class SDSO(Runner):
+
+    def __init__(self, files, calib, preset, mode, reverse):
+        self.files = ""
+        self.calib = ""
+        self.preset = preset
+        self.mode = mode
+        self.reverse = reverse
+        self.nomt = 1
+        self.quiet = 1
+
+        self.cmd = []
+
+    def run(self):
+        sp.run(self.cmd)
+
+    def save(self):
+        # copy results into output_dir / dso
+        pass
+
+
+class DSOL(Runner):
+
+    def __init__(self):
+        pass
+
+    def run(self):
+        pass
+
+
 class Dataset:
 
     def __init__(self, base_dir) -> None:
@@ -55,7 +100,7 @@ class Dataset:
     def get_name(self, idx: int) -> str:
         return self.names[idx]
 
-    def get_file(self, idx: int) -> Path:
+    def get_gt_file(self, idx: int) -> Path:
         return self.files[idx]
 
     @property
@@ -81,9 +126,9 @@ class VkittiDataset(Dataset):
 
     def __init__(self, base_dir: str = "/tmp/vkitti"):
         super().__init__(base_dir)
-        self.files = [
-            self.base_dir / scene / variation / "extrinsic.txt"
-            for scene in self.scenes for variation in self.variations
+        self.data_dirs = [
+            self.base_dir / scene / variation for scene in self.scenes
+            for variation in self.variations
         ]
 
         self.names = [
@@ -91,10 +136,22 @@ class VkittiDataset(Dataset):
             for variation in self.variations
         ]
 
+        self.calib = "Hardcoded"
+
         print(self.files)
 
-    def get_pose(self, idx: int) -> np.ndarray:
-        file = self.get_file(idx)
+    def get_sdso(self, i: int, reverse: bool = False) -> SDSO:
+        return SDSO(self.data_dirs[i] / "frames/rgb",
+                    self.calib,
+                    preset=0,
+                    mode=2,
+                    reverse=reverse)
+
+    def get_gt_file(self, i: int) -> Path:
+        return self.data_dirs[i] / "extrinsic.txt"
+
+    def get_pose(self, i: int) -> np.ndarray:
+        file = self.get_gt_file(i)
         print(f"Reading from {file}")
         extrins = self.prep_extrinsics(file)
         poses = inverse_transform(extrins)
