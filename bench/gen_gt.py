@@ -1,6 +1,7 @@
 from pathlib import Path
 import numpy as np
 from scipy.spatial.transform import Rotation
+import typing as T
 
 
 def inverse_transform(T: np.ndarray) -> np.ndarray:
@@ -46,15 +47,23 @@ class Dataset:
     def __init__(self, base_dir) -> None:
         self.base_dir = Path(base_dir)
         self.base_dir.mkdir(exist_ok=True, parents=True)
+        self.files = []
+        self.names = []
+
+    def __len__(self) -> int:
+        return len(self.files)
 
     def get_name(self, idx: int) -> str:
-        raise NotImplementedError("Not implemented")
+        return self.names[idx]
 
-    def get_pose(self, idx: int) -> np.ndarray:
-        raise NotImplementedError("Not implemented")
+    def get_files(self, idx: int) -> Path:
+        return self.files[idx]
 
     def output_dir(self) -> Path:
         return self.base_dir
+
+    def get_pose(self, idx: int) -> np.ndarray:
+        raise NotImplementedError("Not implemented")
 
 
 class KittiDataset(Dataset):
@@ -83,15 +92,6 @@ class VkittiDataset(Dataset):
         ]
 
         print(self.files)
-
-    def __len__(self) -> int:
-        return len(self.files)
-
-    def get_file(self, idx: int) -> Path:
-        return self.files[idx]
-
-    def get_name(self, idx: int) -> str:
-        return self.names[idx]
 
     def get_pose(self, idx: int) -> np.ndarray:
         file = self.get_file(idx)
