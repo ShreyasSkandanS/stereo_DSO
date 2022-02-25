@@ -33,6 +33,40 @@ class Results:
         self.method_len = method_len
 
 
+class CumulativePlotter:
+
+    def __init__(self):
+        self.ape_rmse_tr_list = []
+        self.rpe_rmse_tr_list = []
+        self.ape_rmse_rot_list = []
+        self.rpe_rmse_rot_list = []
+
+    def add_results(self, dataset: str, method: str, results: dict, threshold, constant_error):
+        for seq_k in results.keys():
+            print(f'Key: {seq_k}')
+            sequence = results[seq_k]
+            print(f'Sequence: {sequence}\n')
+            if sequence.method_len / sequence.gt_len >= threshold:
+                self.ape_rmse_tr_list.append(sequence.ape_rmse)
+                self.ape_rmse_rot_list.append(sequence.ape_rmse_rot)
+                self.rpe_rmse_tr_list.append(sequence.rpe_rmse)
+                self.rpe_rmse_rot_list.append(sequence.rpe_rmse_rot)
+            else:
+                self.ape_rmse_tr_list.append(constant_error)
+                self.ape_rmse_rot_list.append(constant_error)
+                self.rpe_rmse_tr_list.append(constant_error)
+                self.rpe_rmse_rot_list.append(constant_error)
+
+    def gen_cumulative_error_plot(self, ax, error_list, clr):
+        error_less_count = np.sum(np.array(self.ape_rmse_tr_list)[:, None] < error_list, axis=0)
+        ax.plot(error_list, error_less_count / len(self.ape_rmse_tr_list), clr)
+
+    def plot_cumulative_error(self, error_list):
+        fig, ax = plt.subplots()
+        self.gen_cumulative_error_plot(ax, error_list, 'r')
+        plt.show()
+
+
 class EvalMethod:
 
     def __init__(self, base_dir: str, dataset: str, method: str):
@@ -113,18 +147,18 @@ class EvalMethod:
         if not self.results_dict:
             self.results_dict = p_data
 
-    def visualize_results(self, thresh_complete, constant_error):
-        RMSE_list = []
+    def viz_matrix_ape_rmse(self, thresh_complete, constant_error):
+        ape_rmse_list = []
         for seq_k in self.results_dict.keys():
             print(f'Key: {seq_k}')
             sequence = self.results_dict[seq_k]
             print(f'Sequence: {sequence}\n')
             if sequence.method_len / sequence.gt_len >= thresh_complete:
-                RMSE_list.append(sequence.ape_rmse)
+                ape_rmse_list.append(sequence.ape_rmse)
             else:
-                RMSE_list.append(constant_error)
+                ape_rmse_list.append(constant_error)
 
-        ape_rmse_viz_vector = np.tile(np.asarray(RMSE_list), (5, 1))
+        ape_rmse_viz_vector = np.tile(np.asarray(ape_rmse_list), (2, 1))
         fig = plt.figure()
         plt.imshow(ape_rmse_viz_vector, cmap='jet', interpolation='nearest')
         plt.colorbar()
