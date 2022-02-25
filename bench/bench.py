@@ -3,7 +3,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 from dataclasses import dataclass
 import subprocess as sp
-
+import shutil
 
 def inverse_transform(T: np.ndarray) -> np.ndarray:
     """Inverse transform [R, t]^-1 = [R', -R'@t]"""
@@ -57,23 +57,39 @@ class Runner:
 
 class SDSO(Runner):
 
-    def __init__(self, files, calib, preset, mode, reverse):
-        self.files = ""
-        self.calib = ""
+    def __init__(self, base_dir, dataset_name, data_prefix, files, calib, preset, mode, reverse):
+        self.base_dir = base_dir
+        self.dataset_name = dataset_name
+        self.files = base_dir / dataset_name / files 
+        self.calib = calib
         self.preset = preset
         self.mode = mode
         self.reverse = reverse
+        self.prefix = data_prefix
         self.nomt = 1
         self.quiet = 1
+        self.gt = Path().resolve().parent / 'groundTruthPose/dummy.txt'
 
-        self.cmd = []
+        self.output_dir = base_dir / dataset_name / 'SDSO'
+        self.output_dir.mkdir(exist_ok=True, parents=True)
+
+        self.cmd = ['/tmp/dso_dataset', 'files=' + str(self.files), 'calib=' + str(self.calib), 
+                'groundtruth=' + str(self.gt), 'mode=' + str(self.mode), 'nogui=1', 
+                'quiet=' + str(self.quiet), 'nolog=1', 'nomt=' + str(self.nomt)]
+        if self.reverse:
+            self.cmd.append('reverse=1')
 
     def run(self):
         sp.run(self.cmd)
 
     def save(self):
-        # copy results into output_dir / dso
-        pass
+        save_path = self.output_dir / str(self.prefix).replace('/','_')
+        if self.reverse:
+            save_path = f'{save_path}_rev.txt'
+        else:
+            save_path = f'{save_path}_fwd.txt'
+        shutil.copy('result.txt', save_path)
+        
 
 
 class DSOL(Runner):
@@ -222,7 +238,8 @@ class VkittiDataset(Dataset):
             for variation in self.variations
         ]
 
-        self.calib = "Hardcoded"
+        repository_path = Path().resolve().parent
+        self.calib = repository_path / 'calib/vkitti/Scene01.txt'
 
         print(self.data_dirs)
 
@@ -230,7 +247,10 @@ class VkittiDataset(Dataset):
         return self.data_dirs[i].replace('/', '_')
 
     def get_sdso(self, i: int, reverse: bool = False) -> SDSO:
-        return SDSO(self.data_dirs[i] / "frames/rgb",
+        return SDSO(self.base_dir,
+                    self.dataset_name,
+                    self.data_dirs[i],
+                    f'{self.data_dirs[i]}/frames/rgb',
                     self.calib,
                     preset=0,
                     mode=2,

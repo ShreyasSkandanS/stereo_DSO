@@ -2,3 +2,5 @@ build/
 bench/.idea/
 bench/result.txt
 bench/__pycache__
+stereo_dso.*
+result.txt
