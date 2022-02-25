@@ -33,13 +33,13 @@ class Results:
         self.method_len = method_len
 
 
-class CumulativePlotter:
+class ResultAccumulator:
 
     def __init__(self):
-        self.ape_rmse_tr_list = []
-        self.rpe_rmse_tr_list = []
-        self.ape_rmse_rot_list = []
-        self.rpe_rmse_rot_list = []
+        self.ape_rmse_tr = []
+        self.ape_rmse_rot = []
+        self.rpe_rmse_tr = []
+        self.rpe_rmse_rot = []
 
     def add_results(self, dataset: str, method: str, results: dict, threshold, constant_error):
         for seq_k in results.keys():
@@ -47,23 +47,42 @@ class CumulativePlotter:
             sequence = results[seq_k]
             print(f'Sequence: {sequence}\n')
             if sequence.method_len / sequence.gt_len >= threshold:
-                self.ape_rmse_tr_list.append(sequence.ape_rmse)
-                self.ape_rmse_rot_list.append(sequence.ape_rmse_rot)
-                self.rpe_rmse_tr_list.append(sequence.rpe_rmse)
-                self.rpe_rmse_rot_list.append(sequence.rpe_rmse_rot)
+                self.ape_rmse_tr.append(sequence.ape_rmse)
+                self.ape_rmse_rot.append(sequence.ape_rmse_rot)
+                self.rpe_rmse_tr.append(sequence.rpe_rmse)
+                self.rpe_rmse_rot.append(sequence.rpe_rmse_rot)
             else:
-                self.ape_rmse_tr_list.append(constant_error)
-                self.ape_rmse_rot_list.append(constant_error)
-                self.rpe_rmse_tr_list.append(constant_error)
-                self.rpe_rmse_rot_list.append(constant_error)
+                self.ape_rmse_tr.append(constant_error[0])
+                self.ape_rmse_rot.append(constant_error[1])
+                self.rpe_rmse_tr.append(constant_error[2])
+                self.rpe_rmse_rot.append(constant_error[3])
 
-    def gen_cumulative_error_plot(self, ax, error_list, clr):
-        error_less_count = np.sum(np.array(self.ape_rmse_tr_list)[:, None] < error_list, axis=0)
-        ax.plot(error_list, error_less_count / len(self.ape_rmse_tr_list), clr)
 
-    def plot_cumulative_error(self, error_list):
-        fig, ax = plt.subplots()
-        self.gen_cumulative_error_plot(ax, error_list, 'r')
+class CumulativePlotter:
+
+    def __init__(self):
+        fig, axs = plt.subplots(2, 2)
+        self.axs = axs
+        self.fig = fig
+
+    def add_data(self, result_data: ResultAccumulator, color: str, error_list):
+        error_less_count_ape_rmse_t = np.sum(np.array(result_data.ape_rmse_tr)[:, None] < error_list, axis=0)
+        self.axs[0, 0].plot(error_list, error_less_count_ape_rmse_t / len(result_data.ape_rmse_tr), color)
+        self.axs[0, 0].set_title('APE T')
+
+        error_less_count_ape_rmse_r = np.sum(np.array(result_data.ape_rmse_rot)[:, None] < error_list, axis=0)
+        self.axs[0, 1].plot(error_list, error_less_count_ape_rmse_r / len(result_data.ape_rmse_rot), color)
+        self.axs[0, 1].set_title('APE R')
+
+        error_less_count_rpe_rmse_t = np.sum(np.array(result_data.rpe_rmse_tr)[:, None] < error_list, axis=0)
+        self.axs[1, 0].plot(error_list, error_less_count_rpe_rmse_t / len(result_data.rpe_rmse_tr), color)
+        self.axs[1, 0].set_title('RPE T')
+
+        error_less_count_rpe_rmse_r = np.sum(np.array(result_data.rpe_rmse_rot)[:, None] < error_list, axis=0)
+        self.axs[1, 1].plot(error_list, error_less_count_rpe_rmse_r / len(result_data.rpe_rmse_rot), color)
+        self.axs[1, 1].set_title('RPE R')
+
+    def plot_figure(self):
         plt.show()
 
 
