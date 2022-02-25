@@ -94,11 +94,34 @@ class SDSO(Runner):
 
 class DSOL(Runner):
 
-    def __init__(self):
-        pass
+    def __init__(self, base_dir, dataset_name, dataset_id, data_prefix, files, reverse):
+        self.base_dir = base_dir
+        self.dataset_name = dataset_name
+        self.files = base_dir / dataset_name / files
+        self.reverse = reverse
+        self.prefix = data_prefix
+        self.log = 0
+        self.tbb = 0
+        self.viz = False
+        self.wait_ms = 0
+
+        self.output_dir = base_dir / dataset_name / 'DSOL'
+        self.output_dir.mkdir(exist_ok=True, parents=True)
+
+        self.save_path = self.output_dir / str(self.prefix).replace('/', '_')
+        if self.reverse:
+            self.save_path = f'{self.save_path}_rev.txt'
+        else:
+            self.save_path = f'{self.save_path}_fwd.txt'
+
+        self.cmd = ['roslaunch', 'svcpp', 'dsol_data.launch', 'save:=' + str(self.save_path),
+                     'data_dir:=' + str(self.files), 'data:=' + dataset_id, 'log:=' + str(self.log),
+                     'tbb:=' + str(self.tbb), 'vis:=' + str(self.viz), 'wait_ms:=' + str(self.wait_ms)]
+        if self.reverse:
+            self.cmd.append('reverse:=True')
 
     def run(self):
-        pass
+        sp.run(self.cmd)
 
 
 class Dataset:
@@ -203,7 +226,6 @@ class TartanAirDataset(Dataset):
     def get_name(self, i: int) -> str:
         return self.data_dirs[i].replace('/', '_')
 
-
     def get_sdso(self, i: int, reverse: bool = False) -> SDSO:
         return SDSO(self.base_dir,
                     self.dataset_name,
@@ -271,6 +293,14 @@ class VkittiDataset(Dataset):
                     self.calib,
                     preset=0,
                     mode=2,
+                    reverse=reverse)
+
+    def get_dsol(self, i: int, reverse: bool = False) -> DSOL:
+        return DSOL(self.base_dir,
+                    self.dataset_name,
+                    'vk2',
+                    self.data_dirs[i],
+                    self.data_dirs[i],
                     reverse=reverse)
 
     def get_gt_file(self, i: int) -> Path:
