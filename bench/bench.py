@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import subprocess as sp
 import shutil
 
+
 def inverse_transform(T: np.ndarray) -> np.ndarray:
     """Inverse transform [R, t]^-1 = [R', -R'@t]"""
     assert T.shape[-2:] == (4, 4), T.shape
@@ -60,7 +61,7 @@ class SDSO(Runner):
     def __init__(self, base_dir, dataset_name, data_prefix, files, calib, preset, mode, reverse):
         self.base_dir = base_dir
         self.dataset_name = dataset_name
-        self.files = base_dir / dataset_name / files 
+        self.files = base_dir / dataset_name / files
         self.calib = calib
         self.preset = preset
         self.mode = mode
@@ -73,9 +74,9 @@ class SDSO(Runner):
         self.output_dir = base_dir / dataset_name / 'SDSO'
         self.output_dir.mkdir(exist_ok=True, parents=True)
 
-        self.cmd = ['/tmp/dso_dataset', 'files=' + str(self.files), 'calib=' + str(self.calib), 
-                'groundtruth=' + str(self.gt), 'mode=' + str(self.mode), 'nogui=1', 
-                'quiet=' + str(self.quiet), 'nolog=1', 'nomt=' + str(self.nomt)]
+        self.cmd = ['/tmp/dso_dataset', 'files=' + str(self.files), 'calib=' + str(self.calib),
+                    'groundtruth=' + str(self.gt), 'mode=' + str(self.mode), 'nogui=1',
+                    'quiet=' + str(self.quiet), 'nolog=1', 'nomt=' + str(self.nomt)]
         if self.reverse:
             self.cmd.append('reverse=1')
 
@@ -83,13 +84,12 @@ class SDSO(Runner):
         sp.run(self.cmd)
 
     def save(self):
-        save_path = self.output_dir / str(self.prefix).replace('/','_')
+        save_path = self.output_dir / str(self.prefix).replace('/', '_')
         if self.reverse:
             save_path = f'{save_path}_rev.txt'
         else:
             save_path = f'{save_path}_fwd.txt'
         shutil.copy('result.txt', save_path)
-        
 
 
 class DSOL(Runner):
@@ -143,7 +143,8 @@ class KittiDataset(Dataset):
             f'{scene}' for scene in self.scenes
         ]
 
-        self.calib = "Hardcoded"
+        repository_path = Path().resolve().parent
+        self.calib = repository_path / 'calib' / self.dataset_name
 
         print(self.data_dirs)
 
@@ -151,7 +152,14 @@ class KittiDataset(Dataset):
         return self.data_dirs[i].replace('/', '_')
 
     def get_sdso(self, i: int, reverse: bool = False) -> SDSO:
-        raise NotImplementedError("Not Implemented Yet")
+        return SDSO(self.base_dir,
+                    self.dataset_name,
+                    self.data_dirs[i],
+                    f'sequences/{self.data_dirs[i]}',
+                    f'{self.calib}/{self.data_dirs[i]}.txt',
+                    preset=0,
+                    mode=1,
+                    reverse=reverse)
 
     def get_gt_file(self, i: int) -> Path:
         return self.base_dir / self.dataset_name / "poses" / f'{self.data_dirs[i]}.txt'
@@ -174,9 +182,9 @@ class KittiDataset(Dataset):
 
 
 class TartanAirDataset(Dataset):
-
     scenes = ["carwelding", "gascola", "office", "oldtown"]
-    #scenes = ["carwelding", "gascola", "office", "oldtown", "office2", "hospital"]
+
+    # scenes = ["carwelding", "gascola", "office", "oldtown", "office2", "hospital"]
 
     def __init__(self, base_dir: str = "/tmp"):
         super().__init__(base_dir, 'tartan_air')
@@ -187,15 +195,24 @@ class TartanAirDataset(Dataset):
                 if p.is_dir() and p.stem[0] == 'P':
                     self.data_dirs.append(f'{scene}/Easy/{p.stem}')
 
-        self.calib = "Hardcoded"
+        repository_path = Path().resolve().parent
+        self.calib = repository_path / 'calib' / self.dataset_name / 'tartan_air.txt'
 
         print(self.data_dirs)
 
     def get_name(self, i: int) -> str:
         return self.data_dirs[i].replace('/', '_')
 
+
     def get_sdso(self, i: int, reverse: bool = False) -> SDSO:
-        raise NotImplementedError("Not Implemented Yet")
+        return SDSO(self.base_dir,
+                    self.dataset_name,
+                    self.data_dirs[i],
+                    self.data_dirs[i],
+                    self.calib,
+                    preset=0,
+                    mode=2,
+                    reverse=reverse)
 
     def get_gt_file(self, i: int) -> Path:
         return self.base_dir / self.dataset_name / self.data_dirs[i] / 'pose_left.txt'
