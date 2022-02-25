@@ -115,8 +115,8 @@ class DSOL(Runner):
             self.save_path = f'{self.save_path}_fwd.txt'
 
         self.cmd = ['roslaunch', 'svcpp', 'dsol_data.launch', 'save:=' + str(self.save_path),
-                     'data_dir:=' + str(self.files), 'data:=' + dataset_id, 'log:=' + str(self.log),
-                     'tbb:=' + str(self.tbb), 'vis:=' + str(self.viz), 'wait_ms:=' + str(self.wait_ms)]
+                    'data_dir:=' + str(self.files), 'data:=' + dataset_id, 'log:=' + str(self.log),
+                    'tbb:=' + str(self.tbb), 'vis:=' + str(self.viz), 'wait_ms:=' + str(self.wait_ms)]
         if self.reverse:
             self.cmd.append('reverse:=True')
 
@@ -184,6 +184,14 @@ class KittiDataset(Dataset):
                     mode=1,
                     reverse=reverse)
 
+    def get_dsol(self, i: int, reverse: bool = False) -> DSOL:
+        return DSOL(self.base_dir,
+                    self.dataset_name,
+                    'kit',
+                    self.data_dirs[i],
+                    f'sequences/{self.data_dirs[i]}',
+                    reverse=reverse)
+
     def get_gt_file(self, i: int) -> Path:
         return self.base_dir / self.dataset_name / "poses" / f'{self.data_dirs[i]}.txt'
 
@@ -234,6 +242,14 @@ class TartanAirDataset(Dataset):
                     self.calib,
                     preset=0,
                     mode=2,
+                    reverse=reverse)
+
+    def get_dsol(self, i: int, reverse: bool = False) -> DSOL:
+        return DSOL(self.base_dir,
+                    self.dataset_name,
+                    'tta',
+                    self.data_dirs[i],
+                    self.data_dirs[i],
                     reverse=reverse)
 
     def get_gt_file(self, i: int) -> Path:
