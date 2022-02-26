@@ -11,6 +11,14 @@ import matplotlib.pyplot as plt
 import pickle
 
 
+def compute_traj_len(xyzs: np.ndarray) -> float:
+    assert xyzs.shape[1] == 3
+    assert xyzs.ndim == 2
+    diff = np.diff(xyzs, axis=0)
+    square = diff ** 2
+    sqnorm = np.sum(square, axis=1)
+    return np.sum(sqnorm ** 0.5)
+
 @dataclass
 class Results:
     """Class for book keeping results"""
@@ -43,11 +51,11 @@ class ResultAccumulator:
 
     def add_results(self, dataset: str, method: str, results: dict, threshold, constant_error):
         for seq_k in results.keys():
-            #print(f'Key: {seq_k}')
+            # print(f'Key: {seq_k}')
             sequence = results[seq_k]
-            #print(f'Sequence: {sequence}\n')
+            # print(f'Sequence: {sequence}\n')
             if sequence.method_len / sequence.gt_len >= threshold:
-            #if sequence.method_len == sequence.gt_len:
+                # if sequence.method_len == sequence.gt_len:
                 self.ape_rmse_tr.append(sequence.ape_rmse)
                 self.ape_rmse_rot.append(sequence.ape_rmse_rot)
                 self.rpe_rmse_tr.append(sequence.rpe_rmse)
@@ -69,28 +77,32 @@ class CumulativePlotter:
 
     def add_data(self, name: str, result_data: ResultAccumulator, color: str, error_list):
         error_less_count_ape_rmse_t = np.sum(np.array(result_data.ape_rmse_tr)[:, None] < error_list[0], axis=0)
-        self.axs[0, 0].plot(error_list[0], error_less_count_ape_rmse_t / len(result_data.ape_rmse_tr), color, label=name)
+        self.axs[0, 0].plot(error_list[0], error_less_count_ape_rmse_t / len(result_data.ape_rmse_tr), color,
+                            label=name, marker='.')
         self.axs[0, 0].set_title('Translational APE')
         self.axs[0, 0].set_xlabel('Error (m)')
         self.axs[0, 0].set_ylabel('Percentage of runs')
         self.axs[0, 0].legend(loc='lower right')
 
         error_less_count_ape_rmse_r = np.sum(np.array(result_data.ape_rmse_rot)[:, None] < error_list[1], axis=0)
-        self.axs[0, 1].plot(error_list[1], error_less_count_ape_rmse_r / len(result_data.ape_rmse_rot), color, label=name)
+        self.axs[0, 1].plot(error_list[1], error_less_count_ape_rmse_r / len(result_data.ape_rmse_rot), color,
+                            label=name)
         self.axs[0, 1].set_title('Rotational APE')
         self.axs[0, 1].set_xlabel('Error (deg)')
         self.axs[0, 1].set_ylabel('Percentage of runs')
         self.axs[0, 1].legend(loc='lower right')
 
         error_less_count_rpe_rmse_t = np.sum(np.array(result_data.rpe_rmse_tr)[:, None] < error_list[2], axis=0)
-        self.axs[1, 0].plot(error_list[2], error_less_count_rpe_rmse_t / len(result_data.rpe_rmse_tr), color, label=name)
+        self.axs[1, 0].plot(error_list[2], error_less_count_rpe_rmse_t / len(result_data.rpe_rmse_tr), color,
+                            label=name)
         self.axs[1, 0].set_title('Translational RPE')
         self.axs[1, 0].set_xlabel('Error (m)')
         self.axs[1, 0].set_ylabel('Percentage of runs')
         self.axs[1, 0].legend(loc='lower right')
 
         error_less_count_rpe_rmse_r = np.sum(np.array(result_data.rpe_rmse_rot)[:, None] < error_list[3], axis=0)
-        self.axs[1, 1].plot(error_list[3], error_less_count_rpe_rmse_r / len(result_data.rpe_rmse_rot), color, label=name)
+        self.axs[1, 1].plot(error_list[3], error_less_count_rpe_rmse_r / len(result_data.rpe_rmse_rot), color,
+                            label=name)
         self.axs[1, 1].set_title('Rotational RPE')
         self.axs[1, 1].set_xlabel('Error (deg)')
         self.axs[1, 1].set_ylabel('Percentage of runs')
@@ -131,6 +143,8 @@ class EvalMethod:
         gt_in = np.loadtxt(gt_path)
         method_in = np.loadtxt(method_path)
 
+        traj_len = compute_traj_len(gt_in[:, 1:4])
+
         traj_ref = file_interface.read_tum_trajectory_file(gt_path)
         traj_method = file_interface.read_tum_trajectory_file(method_path)
 
@@ -140,6 +154,8 @@ class EvalMethod:
         ape_metric_method = metrics.APE(metrics.PoseRelation.translation_part)
         ape_metric_method.process_data((traj_ref, traj_method))
         ape_rmse_method = ape_metric_method.get_statistic(metrics.StatisticsType.rmse)
+
+        ape_rmse_method /= traj_len
 
         rpe_metric_method = metrics.RPE(metrics.PoseRelation.translation_part)
         rpe_metric_method.process_data((traj_ref, traj_method))
@@ -218,5 +234,6 @@ class EvalMethod:
         axs[1, 1].set_xlabel('Sequence')
         plt.show()
 
-
-
+if __name__ == "__main__":
+    arr = np.array([[0,0,1],[0,0,2],[0,0,3],[0,0,5]])
+    print(compute_traj_len(arr))
