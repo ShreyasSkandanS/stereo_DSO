@@ -43,15 +43,17 @@ class ResultAccumulator:
 
     def add_results(self, dataset: str, method: str, results: dict, threshold, constant_error):
         for seq_k in results.keys():
-            print(f'Key: {seq_k}')
+            #print(f'Key: {seq_k}')
             sequence = results[seq_k]
-            print(f'Sequence: {sequence}\n')
+            #print(f'Sequence: {sequence}\n')
             if sequence.method_len / sequence.gt_len >= threshold:
+            #if sequence.method_len == sequence.gt_len:
                 self.ape_rmse_tr.append(sequence.ape_rmse)
                 self.ape_rmse_rot.append(sequence.ape_rmse_rot)
                 self.rpe_rmse_tr.append(sequence.rpe_rmse)
                 self.rpe_rmse_rot.append(sequence.rpe_rmse_rot)
             else:
+                print(f"{seq_k} was incomplete. GT: {sequence.gt_len} Method: {sequence.method_len}")
                 self.ape_rmse_tr.append(constant_error[0])
                 self.ape_rmse_rot.append(constant_error[1])
                 self.rpe_rmse_tr.append(constant_error[2])
@@ -65,22 +67,34 @@ class CumulativePlotter:
         self.axs = axs
         self.fig = fig
 
-    def add_data(self, result_data: ResultAccumulator, color: str, error_list):
-        error_less_count_ape_rmse_t = np.sum(np.array(result_data.ape_rmse_tr)[:, None] < error_list, axis=0)
-        self.axs[0, 0].plot(error_list, error_less_count_ape_rmse_t / len(result_data.ape_rmse_tr), color)
-        self.axs[0, 0].set_title('APE T')
+    def add_data(self, name: str, result_data: ResultAccumulator, color: str, error_list):
+        error_less_count_ape_rmse_t = np.sum(np.array(result_data.ape_rmse_tr)[:, None] < error_list[0], axis=0)
+        self.axs[0, 0].plot(error_list[0], error_less_count_ape_rmse_t / len(result_data.ape_rmse_tr), color, label=name)
+        self.axs[0, 0].set_title('Translational APE')
+        self.axs[0, 0].set_xlabel('Error (m)')
+        self.axs[0, 0].set_ylabel('Percentage of runs')
+        self.axs[0, 0].legend(loc='lower right')
 
-        error_less_count_ape_rmse_r = np.sum(np.array(result_data.ape_rmse_rot)[:, None] < error_list, axis=0)
-        self.axs[0, 1].plot(error_list, error_less_count_ape_rmse_r / len(result_data.ape_rmse_rot), color)
-        self.axs[0, 1].set_title('APE R')
+        error_less_count_ape_rmse_r = np.sum(np.array(result_data.ape_rmse_rot)[:, None] < error_list[1], axis=0)
+        self.axs[0, 1].plot(error_list[1], error_less_count_ape_rmse_r / len(result_data.ape_rmse_rot), color, label=name)
+        self.axs[0, 1].set_title('Rotational APE')
+        self.axs[0, 1].set_xlabel('Error (deg)')
+        self.axs[0, 1].set_ylabel('Percentage of runs')
+        self.axs[0, 1].legend(loc='lower right')
 
-        error_less_count_rpe_rmse_t = np.sum(np.array(result_data.rpe_rmse_tr)[:, None] < error_list, axis=0)
-        self.axs[1, 0].plot(error_list, error_less_count_rpe_rmse_t / len(result_data.rpe_rmse_tr), color)
-        self.axs[1, 0].set_title('RPE T')
+        error_less_count_rpe_rmse_t = np.sum(np.array(result_data.rpe_rmse_tr)[:, None] < error_list[2], axis=0)
+        self.axs[1, 0].plot(error_list[2], error_less_count_rpe_rmse_t / len(result_data.rpe_rmse_tr), color, label=name)
+        self.axs[1, 0].set_title('Translational RPE')
+        self.axs[1, 0].set_xlabel('Error (m)')
+        self.axs[1, 0].set_ylabel('Percentage of runs')
+        self.axs[1, 0].legend(loc='lower right')
 
-        error_less_count_rpe_rmse_r = np.sum(np.array(result_data.rpe_rmse_rot)[:, None] < error_list, axis=0)
-        self.axs[1, 1].plot(error_list, error_less_count_rpe_rmse_r / len(result_data.rpe_rmse_rot), color)
-        self.axs[1, 1].set_title('RPE R')
+        error_less_count_rpe_rmse_r = np.sum(np.array(result_data.rpe_rmse_rot)[:, None] < error_list[3], axis=0)
+        self.axs[1, 1].plot(error_list[3], error_less_count_rpe_rmse_r / len(result_data.rpe_rmse_rot), color, label=name)
+        self.axs[1, 1].set_title('Rotational RPE')
+        self.axs[1, 1].set_xlabel('Error (deg)')
+        self.axs[1, 1].set_ylabel('Percentage of runs')
+        self.axs[1, 1].legend(loc='lower right')
 
     def plot_figure(self):
         plt.show()

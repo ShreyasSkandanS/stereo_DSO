@@ -152,10 +152,12 @@ class Dataset:
 
     def write_all_gt(self):
         for i in range(len(self)):
-            write_tum_fwd_rev(self.get_pose(i),
-                              f"{self.output_dir()}/{self.get_name(i)}_fwd.txt",
-                              f"{self.output_dir()}/{self.get_name(i)}_rev.txt")
+            self.write_single_gt(i)
 
+    def write_single_gt(self,i):
+        write_tum_fwd_rev(self.get_pose(i),
+                          f"{self.output_dir()}/{self.get_name(i)}_fwd.txt",
+                          f"{self.output_dir()}/{self.get_name(i)}_rev.txt")
 
 class KittiDataset(Dataset):
     scenes = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"]
