@@ -197,3 +197,26 @@ class EvalMethod:
         plt.colorbar()
         plt.grid(None)
         plt.show()
+
+    def viz_rmse(self):
+        fig, axs = plt.subplots(2, 2)
+        axs[0, 0].plot([data.ape_rmse for data in self.results_dict.values()])
+        axs[0, 0].set_title('Translational APE')
+        axs[0, 0].set_ylabel('RMSE (m)')
+        axs[0, 0].set_xlabel('Sequence')
+        axs[0, 1].plot([data.ape_rmse_rot for data in self.results_dict.values()])
+        axs[0, 1].set_title('Rotational APE')
+        axs[0, 1].set_ylabel('RMSE (deg)')
+        axs[0, 1].set_xlabel('Sequence')
+        axs[1, 0].plot([data.rpe_rmse for data in self.results_dict.values()])
+        axs[1, 0].set_title('Translational RPE')
+        axs[1, 0].set_ylabel('RMSE (m)')
+        axs[1, 0].set_xlabel('Sequence')
+        axs[1, 1].plot([data.rpe_rmse_rot for data in self.results_dict.values()])
+        axs[1, 1].set_title('Rotational RPE')
+        axs[1, 1].set_ylabel('RMSE (deg)')
+        axs[1, 1].set_xlabel('Sequence')
+        plt.show()
+
+
+
