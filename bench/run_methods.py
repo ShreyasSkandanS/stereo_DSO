@@ -45,8 +45,8 @@ if __name__ == "__main__":
     #     dsol_kit_rev = kit.get_dsol(i, reverse=True)
     #     dsol_kit_rev.run()
 
-    for i in range(len(tta.data_dirs)):
-        dsol_tta_fwd = tta.get_dsol(i, reverse=False)
-        dsol_tta_fwd.run()
-        dsol_tta_rev = tta.get_dsol(i, reverse=True)
-        dsol_tta_rev.run()
+    # for i in range(len(tta.data_dirs)):
+    #     dsol_tta_fwd = tta.get_dsol(i, reverse=False)
+    #     dsol_tta_fwd.run()
+    #     dsol_tta_rev = tta.get_dsol(i, reverse=True)
+    #     dsol_tta_rev.run()

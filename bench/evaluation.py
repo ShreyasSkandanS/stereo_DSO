@@ -62,7 +62,7 @@ class ResultAccumulator:
                 self.rpe_rmse_tr.append(sequence.rpe_rmse)
                 self.rpe_rmse_rot.append(sequence.rpe_rmse_rot)
             else:
-                print(f"{seq_k} was incomplete. GT: {sequence.gt_len} Method: {sequence.method_len}")
+                print(f"{method} {seq_k} was incomplete. GT: {sequence.gt_len} Method: {sequence.method_len}")
                 self.ape_rmse_tr.append(constant_error[0])
                 self.ape_rmse_rot.append(constant_error[1])
                 self.rpe_rmse_tr.append(constant_error[2])
@@ -91,7 +91,7 @@ class CumulativePlotter:
         self.axs[0, 0].legend(loc='lower right')
 
         error_less_count_ape_rmse_r = np.sum(np.array(result_data.ape_rmse_rot)[:, None] < error_list[1], axis=0)
-        self.axs[0, 1].plot(error_list[1], error_less_count_ape_rmse_r / len(result_data.ape_rmse_rot), color,
+        self.axs[0, 1].plot(error_list[1], (error_less_count_ape_rmse_r / len(result_data.ape_rmse_rot))*100, color,
                             label=name)
         self.axs[0, 1].set_title('Rotational APE')
         self.axs[0, 1].set_xlabel('Error (deg)')
@@ -110,8 +110,9 @@ class CumulativePlotter:
         self.axs[1, 0].set_ylabel('Percentage of runs')
         self.axs[1, 0].legend(loc='lower right')
 
+
         error_less_count_rpe_rmse_r = np.sum(np.array(result_data.rpe_rmse_rot)[:, None] < error_list[3], axis=0)
-        self.axs[1, 1].plot(error_list[3], error_less_count_rpe_rmse_r / len(result_data.rpe_rmse_rot), color,
+        self.axs[1, 1].plot(error_list[3], (error_less_count_rpe_rmse_r / len(result_data.rpe_rmse_rot))*100, color,
                             label=name)
         self.axs[1, 1].set_title('Rotational RPE')
         self.axs[1, 1].set_xlabel('Error (deg)')
@@ -119,6 +120,7 @@ class CumulativePlotter:
         self.axs[1, 1].legend(loc='lower right')
 
     def plot_figure(self):
+        plt.tight_layout()
         plt.show()
 
 
