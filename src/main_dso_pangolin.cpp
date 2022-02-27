@@ -364,6 +364,9 @@ int main(int argc, char** argv) {
   } else if (source.find("tartan_air") != std::string::npos) {
     left_dir = "image_left";
     right_dir = "image_right";
+  } else if (source.find("realsense") != std::string::npos) {
+    left_dir = "infra1";
+    right_dir = "infra2";
   }
 
   ImageFolderReader* reader = new ImageFolderReader(
@@ -554,7 +557,7 @@ int main(int argc, char** argv) {
         1000 / (MilliSecondsTakenMT / numSecondsProcessed));
     // fullSystem->printFrameLifetimes();
     fullSystem->printTimings();
-    if (setting_logStuff) {
+    // if (setting_logStuff) {
       std::ofstream tmlog;
       tmlog.open("logs/time.txt", std::ios::trunc | std::ios::out);
       tmlog << 1000.0f * (ended - started) /
@@ -566,7 +569,7 @@ int main(int argc, char** argv) {
             << "\n";
       tmlog.flush();
       tmlog.close();
-    }
+    // }
   });
 
   if (viewer != 0) viewer->run();
