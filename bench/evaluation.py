@@ -19,6 +19,7 @@ def compute_traj_len(xyzs: np.ndarray) -> float:
     sqnorm = np.sum(square, axis=1)
     return np.sum(sqnorm ** 0.5)
 
+
 @dataclass
 class Results:
     """Class for book keeping results"""
@@ -70,17 +71,22 @@ class ResultAccumulator:
 
 class CumulativePlotter:
 
-    def __init__(self):
+    def __init__(self, traj_norm: bool):
         fig, axs = plt.subplots(2, 2)
         self.axs = axs
         self.fig = fig
+        self.traj_norm = traj_norm
 
     def add_data(self, name: str, result_data: ResultAccumulator, color: str, error_list):
         error_less_count_ape_rmse_t = np.sum(np.array(result_data.ape_rmse_tr)[:, None] < error_list[0], axis=0)
-        self.axs[0, 0].plot(error_list[0], error_less_count_ape_rmse_t / len(result_data.ape_rmse_tr), color,
-                            label=name, marker='.')
+        if self.traj_norm:
+            error_less_count_ape_rmse_t = (error_less_count_ape_rmse_t / len(result_data.ape_rmse_tr)) * 100
+            self.axs[0, 0].set_xlabel('Error (%)')
+        else:
+            error_less_count_ape_rmse_t = error_less_count_ape_rmse_t / len(result_data.ape_rmse_tr)
+            self.axs[0, 0].set_xlabel('Error (m)')
+        self.axs[0, 0].plot(error_list[0] * 100, error_less_count_ape_rmse_t, color, label=name)
         self.axs[0, 0].set_title('Translational APE')
-        self.axs[0, 0].set_xlabel('Error (m)')
         self.axs[0, 0].set_ylabel('Percentage of runs')
         self.axs[0, 0].legend(loc='lower right')
 
@@ -93,10 +99,14 @@ class CumulativePlotter:
         self.axs[0, 1].legend(loc='lower right')
 
         error_less_count_rpe_rmse_t = np.sum(np.array(result_data.rpe_rmse_tr)[:, None] < error_list[2], axis=0)
-        self.axs[1, 0].plot(error_list[2], error_less_count_rpe_rmse_t / len(result_data.rpe_rmse_tr), color,
-                            label=name)
+        if self.traj_norm:
+            error_less_count_rpe_rmse_t = (error_less_count_rpe_rmse_t / len(result_data.rpe_rmse_tr)) * 100
+            self.axs[1, 0].set_xlabel('Error (%)')
+        else:
+            error_less_count_rpe_rmse_t = error_less_count_rpe_rmse_t / len(result_data.rpe_rmse_tr)
+            self.axs[1, 0].set_xlabel('Error (m)')
+        self.axs[1, 0].plot(error_list[2] * 100, error_less_count_rpe_rmse_t, color, label=name)
         self.axs[1, 0].set_title('Translational RPE')
-        self.axs[1, 0].set_xlabel('Error (m)')
         self.axs[1, 0].set_ylabel('Percentage of runs')
         self.axs[1, 0].legend(loc='lower right')
 
@@ -139,11 +149,9 @@ class EvalMethod:
 
         print(f"Identified {len(self.gt_list)} GT files and {len(self.method_list)} {self.method} files.")
 
-    def evaluate_pair(self, method_path: Path, gt_path: Path) -> Results:
+    def evaluate_pair(self, method_path: Path, gt_path: Path, normalize_trajectory: bool) -> Results:
         gt_in = np.loadtxt(gt_path)
         method_in = np.loadtxt(method_path)
-
-        traj_len = compute_traj_len(gt_in[:, 1:4])
 
         traj_ref = file_interface.read_tum_trajectory_file(gt_path)
         traj_method = file_interface.read_tum_trajectory_file(method_path)
@@ -155,11 +163,14 @@ class EvalMethod:
         ape_metric_method.process_data((traj_ref, traj_method))
         ape_rmse_method = ape_metric_method.get_statistic(metrics.StatisticsType.rmse)
 
-        ape_rmse_method /= traj_len
-
         rpe_metric_method = metrics.RPE(metrics.PoseRelation.translation_part)
         rpe_metric_method.process_data((traj_ref, traj_method))
         rpe_rmse_method = rpe_metric_method.get_statistic(metrics.StatisticsType.rmse)
+
+        if normalize_trajectory:
+            traj_len = compute_traj_len(gt_in[:, 1:4])
+            ape_rmse_method /= traj_len
+            rpe_rmse_method /= traj_len
 
         ape_metric_method_rot = metrics.APE(metrics.PoseRelation.rotation_angle_deg)
         ape_metric_method_rot.process_data((traj_ref, traj_method))
@@ -175,11 +186,11 @@ class EvalMethod:
 
         return res
 
-    def evaluate_all(self):
+    def evaluate_all(self, normalize_trajectory: bool):
         for method in self.method_list:
             gt = self.gt_path / f"{method.stem}.txt"
             assert (gt.is_file())
-            res_pair = self.evaluate_pair(method, gt)
+            res_pair = self.evaluate_pair(method, gt, normalize_trajectory)
             self.results_dict[gt.stem] = res_pair
 
     def save_results(self):
@@ -234,6 +245,7 @@ class EvalMethod:
         axs[1, 1].set_xlabel('Sequence')
         plt.show()
 
+
 if __name__ == "__main__":
-    arr = np.array([[0,0,1],[0,0,2],[0,0,3],[0,0,5]])
+    arr = np.array([[0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 5]])
     print(compute_traj_len(arr))
