@@ -52,9 +52,9 @@ class ResultAccumulator:
 
     def add_results(self, dataset: str, method: str, results: dict, threshold, constant_error):
         for seq_k in results.keys():
-            # print(f'Key: {seq_k}')
+            print(f'Key: {seq_k}')
             sequence = results[seq_k]
-            # print(f'Sequence: {sequence}\n')
+            print(f'Sequence: {sequence}\n')
             if sequence.method_len / sequence.gt_len >= threshold:
                 # if sequence.method_len == sequence.gt_len:
                 self.ape_rmse_tr.append(sequence.ape_rmse)
@@ -81,10 +81,10 @@ class CumulativePlotter:
         error_less_count_ape_rmse_t = np.sum(np.array(result_data.ape_rmse_tr)[:, None] < error_list[0], axis=0)
         if self.traj_norm:
             error_less_count_ape_rmse_t = (error_less_count_ape_rmse_t / len(result_data.ape_rmse_tr)) * 100
-            self.axs[0, 0].set_xlabel('Error (%)')
+            #self.axs[0, 0].set_xlabel('Error (%)')
         else:
             error_less_count_ape_rmse_t = error_less_count_ape_rmse_t / len(result_data.ape_rmse_tr)
-            self.axs[0, 0].set_xlabel('Error (m)')
+            #self.axs[0, 0].set_xlabel('Error (m)')
         self.axs[0, 0].plot(error_list[0] * 100, error_less_count_ape_rmse_t, color, label=name)
         self.axs[0, 0].set_title('Translational APE')
         self.axs[0, 0].set_ylabel('Percentage of runs')
@@ -94,8 +94,8 @@ class CumulativePlotter:
         self.axs[0, 1].plot(error_list[1], (error_less_count_ape_rmse_r / len(result_data.ape_rmse_rot))*100, color,
                             label=name)
         self.axs[0, 1].set_title('Rotational APE')
-        self.axs[0, 1].set_xlabel('Error (deg)')
-        self.axs[0, 1].set_ylabel('Percentage of runs')
+        #self.axs[0, 1].set_xlabel('Error (deg)')
+        #self.axs[0, 1].set_ylabel('Percentage of runs')
         self.axs[0, 1].legend(loc='lower right')
 
         error_less_count_rpe_rmse_t = np.sum(np.array(result_data.rpe_rmse_tr)[:, None] < error_list[2], axis=0)
@@ -116,12 +116,15 @@ class CumulativePlotter:
                             label=name)
         self.axs[1, 1].set_title('Rotational RPE')
         self.axs[1, 1].set_xlabel('Error (deg)')
-        self.axs[1, 1].set_ylabel('Percentage of runs')
+        #self.axs[1, 1].set_ylabel('Percentage of runs')
         self.axs[1, 1].legend(loc='lower right')
 
-    def plot_figure(self):
+    def plot_figure(self, save_fig: bool):
         plt.tight_layout()
-        plt.show()
+        if save_fig:
+            plt.savefig("/tmp/cumulative_plot.pdf", bbox_inches='tight')
+        else:
+            plt.show()
 
 
 class EvalMethod:
@@ -220,7 +223,7 @@ class EvalMethod:
             else:
                 ape_rmse_list.append(constant_error)
 
-        ape_rmse_viz_vector = np.tile(np.asarray(ape_rmse_list), (2, 1))
+        ape_rmse_viz_vector = np.tile(np.asarray(ape_rmse_list), (10, 1))
         fig = plt.figure()
         plt.imshow(ape_rmse_viz_vector, cmap='jet', interpolation='nearest')
         plt.colorbar()
