@@ -15,21 +15,24 @@ if __name__ == "__main__":
     dsol_eval_kitti = load_evaluation('/tmp', 'kitti', 'DSOL', normalize_traj=traj_norm)
     dsol_eval_tta = load_evaluation('/tmp', 'tartan_air', 'DSOL', normalize_traj=traj_norm)
 
+    traj_thresh = 0.8
+    error_caps = [0.5, 90, 0.5, 45]
+
     # ACCUMULATE DATA
     sdso_all = ResultAccumulator()
-    sdso_all.add_results('vkitti', 'SDSO', sdso_eval_vkitti.results_dict, 0.8, [0.50, 10, 0.50, 10])
-    sdso_all.add_results('kitti', 'SDSO', sdso_eval_kitti.results_dict, 0.8, [0.50, 10, 0.50, 10])
-    sdso_all.add_results('tartan_air', 'SDSO', sdso_eval_tta.results_dict, 0.8, [0.50, 10, 0.50, 10])
+    sdso_all.add_results('vkitti', 'SDSO', sdso_eval_vkitti.results_dict, traj_thresh, error_caps)
+    sdso_all.add_results('kitti', 'SDSO', sdso_eval_kitti.results_dict, traj_thresh, error_caps)
+    sdso_all.add_results('tartan_air', 'SDSO', sdso_eval_tta.results_dict, traj_thresh, error_caps)
 
     dsol_all = ResultAccumulator()
-    dsol_all.add_results('vkitti', 'DSOL', dsol_eval_vkitti.results_dict, 0.8, [0.50, 10, 0.50, 10])
-    dsol_all.add_results('kitti', 'DSOL', dsol_eval_kitti.results_dict, 0.8, [0.50, 10, 0.50, 10])
-    dsol_all.add_results('tartan_air', 'DSOL', dsol_eval_tta.results_dict, 0.8, [0.50, 10, 0.50, 10])
+    dsol_all.add_results('vkitti', 'DSOL', dsol_eval_vkitti.results_dict, traj_thresh, error_caps)
+    dsol_all.add_results('kitti', 'DSOL', dsol_eval_kitti.results_dict, traj_thresh, error_caps)
+    dsol_all.add_results('tartan_air', 'DSOL', dsol_eval_tta.results_dict, traj_thresh, error_caps)
 
     n_rows = 16
     n_cols = 17
     ape_t_amax = 0.1
-    ape_r_amax = 10
+    ape_r_amax = 25
 
     sdso_ape_t_arr = np.zeros(n_rows * n_cols, dtype=float) - 1
     sdso_ape_t_arr[:len(sdso_all.ape_rmse_tr)] = np.asarray(sdso_all.ape_rmse_tr)
