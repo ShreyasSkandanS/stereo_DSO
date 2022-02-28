@@ -54,7 +54,7 @@ int start = 0;
 int end = 100000;
 bool prefetch = false;
 float playbackSpeed =
-    0;  // 0 for linearize (play as fast as possible, while sequentializing
+    1;  // 0 for linearize (play as fast as possible, while sequentializing
         // tracking & mapping). otherwise, factor on timestamps.
 bool preload = false;
 bool useSampleOutput = false;
@@ -83,6 +83,8 @@ void exitThread() {
 
 void settingsDefault(int preset) {
   printf("\n=============== PRESET Settings: ===============\n");
+  std::cout << "playback speed: " << playbackSpeed << std::endl;
+
   if (preset == 0 || preset == 1) {
     printf(
         "DEFAULT settings:\n"
@@ -104,7 +106,7 @@ void settingsDefault(int preset) {
 
     setting_logStuff = false;
     setting_kfGlobalWeight =
-        0.3;  // original is 1.0. 0.3 is a balance between speed and accuracy.
+        1.0;  // original is 1.0. 0.3 is a balance between speed and accuracy.
               // if tracking lost, set this para higher
     setting_maxShiftWeightT =
         0.04f * (640 + 128);  // original is 0.04f * (640+480); this para is
@@ -424,8 +426,9 @@ int main(int argc, char** argv) {
       } else {
         double tsThis = reader->getTimestamp(idsToPlay[idsToPlay.size() - 1]);
         double tsPrev = reader->getTimestamp(idsToPlay[idsToPlay.size() - 2]);
-        timesToPlayAt.push_back(timesToPlayAt.back() +
-                                fabs(tsThis - tsPrev) / playbackSpeed);
+        // timesToPlayAt.push_back(timesToPlayAt.back() +
+        //                         fabs(tsThis - tsPrev) / playbackSpeed);
+        timesToPlayAt.push_back(timesToPlayAt.back() + 16 * 1e-3);
       }
     }
     for (int i = lstart;
